@@ -1,50 +1,184 @@
-# Welcome to your Expo app 👋
+# App de Gestão Escolar
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## 📱 Sobre o Projeto
 
-## Get started
+Aplicativo mobile desenvolvido em React Native com Expo para gestão escolar, permitindo diferentes níveis de acesso e funcionalidades para professores, administrativos e alunos.
 
-1. Install dependencies
+## 🏗️ Arquitetura
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+### Estrutura de Diretórios
+```
+src/
+├── app/                    # Páginas da aplicação (Expo Router)
+│   ├── _layout.tsx        # Layout principal e configuração de rotas
+│   ├── home.tsx           # Tela inicial
+│   ├── login.tsx          # Tela de login
+│   ├── register-teacher/  # Funcionalidades de professores
+│   ├── edit-teacher/      # Edição de professores
+│   ├── students/          # Gestão de alunos
+│   ├── edit-profile/      # Edição de perfil
+│   └── edit-post/         # Edição de posts
+├── components/            # Componentes reutilizáveis
+├── contexts/             # Contextos React (Auth, etc)
+├── types/                # Definições de tipos TypeScript
+└── utils/                # Funções utilitárias
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 🔐 Sistema de Autenticação
 
-## Learn more
+- Gerenciado pelo `AuthContext`
+- Três níveis de acesso:
+  - Administrativo
+  - Professor
+  - Aluno
+- Persistência de sessão
+- Rotas protegidas
 
-To learn more about developing your project with Expo, look at the following resources:
+### 👥 Controle de Acesso
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+#### Administrativo
+- Visualização de todos os posts
+- Gerenciamento de professores (CRUD)
+- Edição e exclusão de posts
+- Acesso à lista de docentes
 
-## Join the community
+#### Professor
+- Criação de posts
+- Gerenciamento de alunos (CRUD)
+- Edição do próprio perfil
+- Cadastro de outros professores
 
-Join our community of developers creating universal apps.
+#### Aluno
+- Visualização de posts
+- Acesso básico ao sistema
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### 📝 Gestão de Conteúdo
+
+- Sistema de posts com:
+  - Título
+  - Conteúdo
+  - Autor
+  - Data
+- Funcionalidades de busca
+- Paginação de conteúdo
+
+### 🎨 UI/UX
+
+- Design consistente
+- Feedback visual para ações
+- Validações de formulários
+- Navegação intuitiva
+- Componentes reutilizáveis
+
+## 🛠️ Tecnologias
+
+- React Native
+- Expo
+- TypeScript
+- Expo Router
+- Context API
+- React Navigation
+
+## 📦 Principais Funcionalidades
+
+### Autenticação
+- Login com email/senha
+- Identificação automática de roles
+- Logout
+- Persistência de sessão
+
+### Gestão de Usuários
+- Cadastro de professores
+- Cadastro de alunos
+- Edição de perfil
+- Alteração de senha
+
+### Posts
+- Criação de posts
+- Edição de posts (admin)
+- Exclusão de posts (admin)
+- Listagem paginada
+- Busca por conteúdo
+
+### Administrativo
+- Gestão completa de professores
+- Controle total sobre posts
+- Dashboard administrativo
+
+### Professores
+- Gestão de alunos
+- Criação de conteúdo
+- Edição de perfil próprio
+
+## 🚀 Como Executar
+
+1. Clone o repositório
+```bash
+git clone [url-do-repositorio]
+```
+
+2. Instale as dependências
+```bash
+npm install
+```
+
+3. Execute o projeto
+```bash
+npx expo start
+```
+
+## 🔄 Fluxos Principais
+
+### Fluxo de Autenticação
+1. Usuário acessa o app
+2. Realiza login com email/senha
+3. Sistema identifica a role
+4. Redireciona para home específica
+
+### Fluxo Administrativo
+1. Login como admin
+2. Acesso à lista de docentes
+3. Gerenciamento de professores
+4. Controle de posts
+
+### Fluxo de Professor
+1. Login como professor
+2. Criação de posts
+3. Gestão de alunos
+4. Edição de perfil
+
+### Fluxo de Aluno
+1. Login como aluno
+2. Visualização de posts
+3. Navegação básica
+
+## 📱 Telas Principais
+
+- Login
+- Home (específica por role)
+- Lista de Professores
+- Lista de Alunos
+- Edição de Perfil
+- Criação/Edição de Posts
+- Cadastro de Professores/Alunos
+
+## 🔒 Segurança
+
+- Validação de inputs
+- Proteção de rotas
+- Controle de acesso por role
+- Sanitização de dados
+- Feedback de erros
+
+## 🎯 Próximos Passos
+
+- [ ] Implementação de testes
+- [ ] Integração com backend
+- [ ] Cache offline
+- [ ] Notificações push
+- [ ] Relatórios e analytics
+- [ ] Melhorias de performance
+- [ ] Temas dark/light
+- [ ] Acessibilidade
+
+
