@@ -99,31 +99,44 @@ export default function Home() {
   };
 
   const renderPost = ({ item }: { item: Post }) => (
-    <View style={styles.postCard}>
-      <View style={styles.postContent}>
-        <Text style={styles.postTitle}>{item.title}</Text>
-        <Text style={styles.postText}>{item.content}</Text>
-        <Text style={styles.postAuthor}>Por: {item.author}</Text>
-        <Text style={styles.postDate}>{item.date}</Text>
-      </View>
-      
-      {user?.role === 'administrativo' && (
-        <View style={styles.postActions}>
-          <TouchableOpacity 
-            onPress={() => handleEditPost(item.id)}
-            style={[styles.actionButton, styles.editButton]}
-          >
-            <Text style={styles.actionButtonText}>Editar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            onPress={() => handleDeletePost(item.id)}
-            style={[styles.actionButton, styles.deleteButton]}
-          >
-            <Text style={styles.actionButtonText}>Excluir</Text>
-          </TouchableOpacity>
+    <TouchableOpacity 
+      onPress={() => router.push({
+        pathname: '/post/[id]',
+        params: { id: item.id }
+      })}
+    >
+      <View style={styles.postCard}>
+        <View style={styles.postContent}>
+          <Text style={styles.postTitle}>{item.title}</Text>
+          <Text style={styles.postText}>{item.content}</Text>
+          <Text style={styles.postAuthor}>Por: {item.author}</Text>
+          <Text style={styles.postDate}>{item.date}</Text>
         </View>
-      )}
-    </View>
+        
+        {user?.role === 'administrativo' && (
+          <View style={styles.postActions}>
+            <TouchableOpacity 
+              onPress={(e) => {
+                e.stopPropagation();
+                handleEditPost(item.id);
+              }}
+              style={[styles.actionButton, styles.editButton]}
+            >
+              <Text style={styles.actionButtonText}>Editar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              onPress={(e) => {
+                e.stopPropagation();
+                handleDeletePost(item.id);
+              }}
+              style={[styles.actionButton, styles.deleteButton]}
+            >
+              <Text style={styles.actionButtonText}>Excluir</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+    </TouchableOpacity>
   );
   console.log('user role home', user?.role);
 
