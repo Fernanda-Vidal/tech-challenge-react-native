@@ -125,12 +125,13 @@ export default function Home() {
       )}
     </View>
   );
+  console.log('user role home', user?.role);
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.welcomeText}>
-          Bem-vindo, {user?.role === 'aluno' ? 'aluno' : user?.email} ({user?.role})
+          Bem-vindo, {user?.role === undefined ? 'aluno' : user?.email}
         </Text>
         <View style={styles.headerButtons}>
           {user?.role === 'professor' && (
