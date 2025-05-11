@@ -6,16 +6,19 @@ import {
   StyleSheet, 
   TouchableOpacity,
   TextInput,
-  Alert
+  Alert,
+  ActivityIndicator,
+  RefreshControl
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { useRouter } from 'expo-router';
-import { Post } from '../types';
+import type { Post } from '../types';
+import { usePosts } from '../hooks/usePosts';
 
 export default function Home() {
   const { user, signOut } = useAuth();
   const router = useRouter();
-  const [posts, setPosts] = useState<Post[]>([]);
+  const { data: posts, isLoading, isError, refetch, isRefetching } = usePosts();
   const [searchText, setSearchText] = useState('');
   const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
 
@@ -25,41 +28,19 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // Dados mockados
-    const mockPosts = [
-      {
-        id: '1',
-        title: 'Primeiro Post',
-        content: 'Conteúdo do primeiro post',
-        author: 'João Silva',
-        date: '2024-03-10',
-      },
-      {
-        id: '2',
-        title: 'Segundo Post',
-        content: 'Conteúdo do segundo post',
-        author: 'Maria Santos',
-        date: '2024-03-09',
-      },
-      {
-        id: '3',
-        title: 'Tecnologia na Educação',
-        content: 'Como a tecnologia está transformando a sala de aula',
-        author: 'Pedro Alves',
-        date: '2024-03-08',
-      },
-    ];
-    setPosts(mockPosts);
-    setFilteredPosts(mockPosts);
-  }, []);
+    if (posts) {
+      setFilteredPosts(posts);
+    }
+  }, [posts]);
 
-  // Função para filtrar os posts
   const handleSearch = (text: string) => {
     setSearchText(text);
-    const filtered = posts.filter(post => 
-      post.title.toLowerCase().includes(text.toLowerCase()) ||
-      post.content.toLowerCase().includes(text.toLowerCase()) ||
-      post.author.toLowerCase().includes(text.toLowerCase())
+    if (!posts) return;
+
+    const filtered = posts.filter(post =>
+      post.titulo.toLowerCase().includes(text.toLowerCase()) ||
+      post.conteudo.toLowerCase().includes(text.toLowerCase()) ||
+      post.nome_professor.toLowerCase().includes(text.toLowerCase())
     );
     setFilteredPosts(filtered);
   };
@@ -79,8 +60,7 @@ export default function Home() {
           onPress: async () => {
             try {
               // Aqui você implementaria a chamada real à API
-              setPosts(posts.filter(post => post.id !== postId));
-              setFilteredPosts(filteredPosts.filter(post => post.id !== postId));
+              refetch();
               Alert.alert('Sucesso', 'Post excluído com sucesso!');
             } catch (error) {
               Alert.alert('Erro', 'Não foi possível excluir o post');
@@ -92,53 +72,27 @@ export default function Home() {
   };
 
   const handleEditPost = (postId: string) => {
-    router.push({
-      pathname: '/edit-post/[id]',
-      params: { id: postId }
-    });
+    router.push(`/edit-post/${postId}`);
   };
 
-  const renderPost = ({ item }: { item: Post }) => (
-    <TouchableOpacity 
-      onPress={() => router.push({
-        pathname: '/post/[id]',
-        params: { id: item.id }
-      })}
-    >
-      <View style={styles.postCard}>
-        <View style={styles.postContent}>
-          <Text style={styles.postTitle}>{item.title}</Text>
-          <Text style={styles.postText}>{item.content}</Text>
-          <Text style={styles.postAuthor}>Por: {item.author}</Text>
-          <Text style={styles.postDate}>{item.date}</Text>
-        </View>
-        
-        {user?.role === 'administrativo' && (
-          <View style={styles.postActions}>
-            <TouchableOpacity 
-              onPress={(e) => {
-                e.stopPropagation();
-                handleEditPost(item.id);
-              }}
-              style={[styles.actionButton, styles.editButton]}
-            >
-              <Text style={styles.actionButtonText}>Editar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              onPress={(e) => {
-                e.stopPropagation();
-                handleDeletePost(item.id);
-              }}
-              style={[styles.actionButton, styles.deleteButton]}
-            >
-              <Text style={styles.actionButtonText}>Excluir</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+  if (isLoading) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" color="#007AFF" />
       </View>
-    </TouchableOpacity>
-  );
-  console.log('user role home', user?.role);
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.errorText}>Erro ao carregar posts</Text>
+        <TouchableOpacity style={styles.retryButton} onPress={() => refetch()}>
+          <Text style={styles.retryButtonText}>Tentar novamente</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -210,11 +164,45 @@ export default function Home() {
       
       <FlatList
         data={filteredPosts}
-        renderItem={renderPost}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
-        ListEmptyComponent={() => (
-          <Text style={styles.emptyText}>Nenhum post encontrado</Text>
+        keyExtractor={(item) => item.id_postagem.toString()}
+        refreshControl={
+          <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+        }
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.postCard}
+            onPress={() => router.push(`/post/${item.id_postagem}`)}
+          >
+            <Text style={styles.postTitle}>{item.titulo}</Text>
+            <Text style={styles.postSubtitle}>{item.subtitulo}</Text>
+            <Text style={styles.postContent} numberOfLines={2}>
+              {item.conteudo}
+            </Text>
+            <View style={styles.postMetadata}>
+              <Text style={styles.postAuthor}>
+                por {item.nome_professor}
+              </Text>
+              <Text style={styles.postDiscipline}>
+                {item.nome_disciplina} • {item.nome_subdisciplina}
+              </Text>
+            </View>
+            {user?.role === 'administrativo' && (
+              <View style={styles.postActions}>
+                <TouchableOpacity
+                  onPress={() => handleEditPost(item.id_postagem.toString())}
+                  style={[styles.actionButton, styles.editButton]}
+                >
+                  <Text style={styles.actionButtonText}>Editar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => handleDeletePost(item.id_postagem.toString())}
+                  style={[styles.actionButton, styles.deleteButton]}
+                >
+                  <Text style={styles.actionButtonText}>Excluir</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </TouchableOpacity>
         )}
       />
     </View>
@@ -257,47 +245,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     fontSize: 16,
   },
-  listContainer: {
-    padding: 15,
-  },
-  postCard: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#eee',
-  },
-  postContent: {
-    flex: 1,
-  },
-  postTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  postText: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 8,
-  },
-  postAuthor: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 4,
-  },
-  postDate: {
-    fontSize: 14,
-    color: '#666',
-  },
-  postActions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+  buttonContainer: {
     gap: 10,
-    marginTop: 10,
-    paddingTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
   },
   actionButton: {
     padding: 8,
@@ -305,25 +254,60 @@ const styles = StyleSheet.create({
     minWidth: 70,
     alignItems: 'center',
   },
-  editButton: {
-    backgroundColor: '#007AFF',
-  },
-  deleteButton: {
-    backgroundColor: '#dc3545',
-  },
   actionButtonText: {
     color: '#fff',
     fontSize: 14,
     fontWeight: '500',
   },
-  emptyText: {
-    textAlign: 'center',
+  postCard: {
+    backgroundColor: '#fff',
+    padding: 16,
+    marginHorizontal: 16,
+    marginVertical: 8,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  postTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  postSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 8,
+  },
+  postContent: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 8,
+  },
+  postAuthor: {
+    fontSize: 12,
+    color: '#999',
+  },
+  errorText: {
     fontSize: 16,
     color: '#666',
-    marginTop: 20,
+    marginBottom: 16,
   },
-  buttonContainer: {
-    gap: 10,
+  retryButton: {
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   adminButton: {
     backgroundColor: '#28a745',
@@ -345,5 +329,33 @@ const styles = StyleSheet.create({
   profileButtonText: {
     color: '#007AFF', // Cor azul padrão do iOS
     fontSize: 16,
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  postActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: 8,
+    gap: 8,
+  },
+  editButton: {
+    backgroundColor: '#007AFF',
+  },
+  deleteButton: {
+    backgroundColor: '#dc3545',
+  },
+  postMetadata: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  postDiscipline: {
+    fontSize: 12,
+    color: '#666',
+    fontStyle: 'italic',
   },
 });

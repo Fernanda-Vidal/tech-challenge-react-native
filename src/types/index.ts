@@ -6,9 +6,14 @@ export interface User {
 }
 
 export interface Post {
-  id: string;
-  title: string;
-  content: string;
-  author: string;
-  date: string;
+  id_postagem: number;
+  titulo: string;
+  subtitulo: string;
+  conteudo: string;
+  id_professor: number;
+  nome_professor: string;
+  id_disciplina: number;
+  nome_disciplina: string;
+  id_subdisciplina: number;
+  nome_subdisciplina: string;
 }

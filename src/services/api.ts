@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { Platform } from 'react-native';
+import type { Post } from '../types';
 
 // Configuração da URL base dependendo do ambiente
 const getBaseUrl = () => {
@@ -21,6 +22,7 @@ export const api = axios.create({
   timeout: 10000, // timeout de 10 segundos
 });
 
+// Interfaces
 interface LoginRequest {
   email: string;
   password: string;
@@ -37,6 +39,7 @@ interface LoginResponse {
   };
 }
 
+// Serviços
 export const authService = {
   login: async ({ email, password, role }: LoginRequest): Promise<LoginResponse> => {
     try {
@@ -63,6 +66,31 @@ export const authService = {
         });
       } else {
         console.error('Erro não esperado:', error);
+      }
+      throw error;
+    }
+  },
+};
+
+export const postService = {
+  getPosts: async (): Promise<Post[]> => {
+    try {
+      console.log('Buscando posts...');
+      const response = await api.get('/post');
+      console.log('Posts recebidos:', response.data);
+      
+      // A API retorna um objeto com a chave "posts" contendo o array
+      return response.data.posts;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error('Erro ao buscar posts:', {
+          message: error.message,
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+        });
+      } else {
+        console.error('Erro não esperado ao buscar posts:', error);
       }
       throw error;
     }
