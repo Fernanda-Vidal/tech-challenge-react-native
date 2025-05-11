@@ -95,4 +95,27 @@ export const postService = {
       throw error;
     }
   },
+
+  getPostById: async (id: string | number): Promise<Post> => {
+    try {
+      console.log(`Buscando post ${id}...`);
+      const response = await api.get(`/post/${id}`);
+      console.log('Post recebido:', response.data);
+      
+      // A API retorna um objeto com a chave "post" contendo um array com um único post
+      return response.data.post[0];
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error('Erro ao buscar post:', {
+          message: error.message,
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+        });
+      } else {
+        console.error('Erro não esperado ao buscar post:', error);
+      }
+      throw error;
+    }
+  },
 }; 

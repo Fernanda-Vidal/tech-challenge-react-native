@@ -4,25 +4,41 @@ import {
   Text, 
   StyleSheet, 
   ScrollView, 
-  TouchableOpacity 
+  TouchableOpacity,
+  ActivityIndicator
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
-import { Post } from '../../types';
+import { usePost } from '../../hooks/usePost';
 
 export default function PostDetail() {
-  const { id } = useLocalSearchParams();
+  const params = useLocalSearchParams();
+  const id = typeof params.id === 'string' ? params.id : Array.isArray(params.id) ? params.id[0] : '';
   const router = useRouter();
   const { user } = useAuth();
+  const { data: post, isLoading, isError } = usePost(id);
 
-  // Simular busca do post pelo ID (aqui você substituiria por uma chamada real à API)
-  const post: Post = {
-    id: '1',
-    title: 'Primeiro Post',
-    content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-    author: 'João Silva',
-    date: '2024-03-10',
-  };
+  if (isLoading) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" color="#007AFF" />
+      </View>
+    );
+  }
+
+  if (isError || !post) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.errorText}>Erro ao carregar o post</Text>
+        <TouchableOpacity 
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <Text style={styles.backButtonText}>Voltar</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -39,16 +55,22 @@ export default function PostDetail() {
       </View>
 
       <ScrollView style={styles.content}>
-        <Text style={styles.title}>{post.title}</Text>
-        <Text style={styles.meta}>
-          Por {post.author} • {post.date}
-        </Text>
-        <Text style={styles.contentText}>{post.content}</Text>
+        <Text style={styles.title}>{post.titulo}</Text>
+        <Text style={styles.subtitle}>{post.subtitulo}</Text>
+        <View style={styles.metadataContainer}>
+          <Text style={styles.meta}>
+            Por {post.nome_professor}
+          </Text>
+          <Text style={styles.meta}>
+            {post.nome_disciplina} • {post.nome_subdisciplina}
+          </Text>
+        </View>
+        <Text style={styles.contentText}>{post.conteudo}</Text>
 
         {user?.role === 'professor' && (
           <TouchableOpacity 
             style={styles.editButton}
-            onPress={() => router.push(`/edit-post/${id}`)}
+            onPress={() => router.push(`/edit-post/${post.id_postagem}`)}
           >
             <Text style={styles.editButtonText}>Editar Post</Text>
           </TouchableOpacity>
@@ -101,10 +123,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
   },
+  subtitle: {
+    fontSize: 18,
+    color: '#666',
+    marginBottom: 15,
+  },
+  metadataContainer: {
+    marginBottom: 20,
+  },
   meta: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 20,
+    marginBottom: 5,
   },
   contentText: {
     fontSize: 16,
@@ -124,5 +154,17 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 20,
+    textAlign: 'center',
   },
 }); 
