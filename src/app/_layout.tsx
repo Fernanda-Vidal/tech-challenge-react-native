@@ -10,7 +10,7 @@ export {
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: 'login',
+  initialRouteName: 'welcome',
 };
 
 export default function RootLayout() {
@@ -21,6 +21,13 @@ export default function RootLayout() {
           <Stack.Screen 
             name="index"
             options={{ headerShown: false }}
+          />
+          <Stack.Screen 
+            name="welcome"
+            options={{ 
+              headerShown: false,
+              gestureEnabled: false
+            }}
           />
           <Stack.Screen 
             name="login" 
