@@ -21,7 +21,7 @@ export default function Home() {
 
   const handleLogout = () => {
     signOut();
-    router.replace('/login');
+    router.replace('/welcome');
   };
 
   useEffect(() => {
@@ -130,7 +130,7 @@ export default function Home() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.welcomeText}>
-          Bem-vindo, {user?.email} ({user?.role})
+          Bem-vindo, {user?.role === 'aluno' ? 'aluno' : user?.email} ({user?.role})
         </Text>
         <View style={styles.headerButtons}>
           {user?.role === 'professor' && (
