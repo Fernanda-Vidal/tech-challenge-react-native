@@ -118,4 +118,34 @@ export const postService = {
       throw error;
     }
   },
+
+  createPost: async (data: {
+    titulo: string;
+    subtitulo: string;
+    conteudo: string;
+    idProfessor: string;
+    idDisciplina: string;
+    idSubdisciplina: string;
+  }): Promise<Post> => {
+    try {
+      console.log('Criando novo post:', data);
+      const response = await api.post('/post', data);
+      console.log('Resposta da criação:', response.data);
+      
+      // A API retorna um array com um único post dentro da chave newPost
+      return response.data.newPost[0];
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error('Erro ao criar post:', {
+          message: error.message,
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+        });
+      } else {
+        console.error('Erro não esperado ao criar post:', error);
+      }
+      throw error;
+    }
+  },
 }; 

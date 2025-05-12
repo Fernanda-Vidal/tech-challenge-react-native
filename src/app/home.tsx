@@ -22,6 +22,11 @@ export default function Home() {
   const [searchText, setSearchText] = useState('');
   const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
 
+  useEffect(() => {
+    console.log('User na home:', user);
+    console.log('Role do usuário:', user?.role);
+  }, [user]);
+
   const handleLogout = () => {
     signOut();
     router.replace('/welcome');
@@ -128,40 +133,40 @@ export default function Home() {
           onChangeText={handleSearch}
           autoCapitalize="none"
         />
-        <View style={styles.buttonContainer}>
-          {user?.role === 'professor' && (
-            <>
-              <TouchableOpacity 
-                style={styles.actionButton}
-                onPress={() => router.push('/create-post')}
-              >
-                <Text style={styles.actionButtonText}>+ Novo Post</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={[styles.actionButton, styles.registerTeacherButton]}
-                onPress={() => router.push('/register-teacher')}
-              >
-                <Text style={styles.actionButtonText}>+ Cadastrar Professor</Text>
-              </TouchableOpacity>
+        {user?.role === 'professor' && (
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity 
+              style={styles.actionButton}
+              onPress={() => router.push('/create-post')}
+            >
+              <Text style={styles.actionButtonText}>+ Novo Post</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={[styles.actionButton, styles.registerTeacherButton]}
+              onPress={() => router.push('/register-teacher')}
+            >
+              <Text style={styles.actionButtonText}>+ Cadastrar Professor</Text>
+            </TouchableOpacity>
 
-              <TouchableOpacity 
-                style={[styles.actionButton, styles.studentsButton]}
-                onPress={() => router.push('/students')}
-              >
-                <Text style={styles.actionButtonText}>Alunos</Text>
-              </TouchableOpacity>
-            </>
-          )}
-          {user?.role === 'administrativo' && (
+            <TouchableOpacity 
+              style={[styles.actionButton, styles.studentsButton]}
+              onPress={() => router.push('/students')}
+            >
+              <Text style={styles.actionButtonText}>Alunos</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        {user?.role === 'administrativo' && (
+          <View style={styles.buttonContainer}>
             <TouchableOpacity 
               style={[styles.actionButton, styles.adminButton]}
               onPress={() => router.push('/teachers')}
             >
               <Text style={styles.actionButtonText}>Docentes</Text>
             </TouchableOpacity>
-          )}
-        </View>
+          </View>
+        )}
       </View>
       
       <FlatList
@@ -192,13 +197,13 @@ export default function Home() {
               <View style={styles.postActions}>
                 <TouchableOpacity
                   onPress={() => handleEditPost(item.id_postagem.toString())}
-                  style={[styles.actionButton, styles.editButton]}
+                  style={[styles.actionButton, styles.editButton, styles.cardActionButton]}
                 >
                   <Text style={styles.actionButtonText}>Editar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => handleDeletePost(item.id_postagem.toString())}
-                  style={[styles.actionButton, styles.deleteButton]}
+                  style={[styles.actionButton, styles.deleteButton, styles.cardActionButton]}
                 >
                   <Text style={styles.actionButtonText}>Excluir</Text>
                 </TouchableOpacity>
@@ -248,17 +253,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   buttonContainer: {
+    width: '100%',
+    marginTop: 15,
     gap: 10,
   },
   actionButton: {
-    padding: 8,
-    borderRadius: 6,
+    backgroundColor: '#007AFF',
+    padding: 15,
+    borderRadius: 8,
     minWidth: 70,
     alignItems: 'center',
+    marginTop: 10,
+    width: '100%'
   },
   actionButtonText: {
     color: '#fff',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '500',
   },
   postCard: {
@@ -338,16 +348,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   postActions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
     marginTop: 8,
     gap: 8,
+    width: '100%',
   },
   editButton: {
     backgroundColor: '#007AFF',
   },
   deleteButton: {
     backgroundColor: '#dc3545',
+  },
+  cardActionButton: {
+    padding: 12,
+    minWidth: 'auto',
+    marginTop: 0,
+    width: '100%',
   },
   postMetadata: {
     flexDirection: 'row',

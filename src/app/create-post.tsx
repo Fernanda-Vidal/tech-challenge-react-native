@@ -5,54 +5,56 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Alert,
+  ActivityIndicator,
   ScrollView,
-  Alert
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useCreatePost } from '../hooks/usePost';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function CreatePost() {
   const router = useRouter();
   const { user } = useAuth();
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [author, setAuthor] = useState(user?.email || '');
+  const createPostMutation = useCreatePost();
 
-  const handlePublish = () => {
-    if (!title.trim() || !content.trim() || !author.trim()) {
+  const [titulo, setTitulo] = useState('');
+  const [subtitulo, setSubtitulo] = useState('');
+  const [conteudo, setConteudo] = useState('');
+  const [idDisciplina, setIdDisciplina] = useState('1'); // Temporariamente fixo
+  const [idSubdisciplina, setIdSubdisciplina] = useState('1'); // Temporariamente fixo
+
+  const handleCreatePost = async () => {
+    if (!titulo || !subtitulo || !conteudo) {
       Alert.alert('Erro', 'Por favor, preencha todos os campos');
       return;
     }
 
-    // Aqui você implementaria a lógica real de publicação
-    const newPost = {
-      id: Date.now().toString(),
-      title,
-      content,
-      author,
-      date: new Date().toISOString().split('T')[0]
-    };
+    try {
+      await createPostMutation.mutateAsync({
+        titulo,
+        subtitulo,
+        conteudo,
+        idProfessor: '1', // Temporariamente fixo
+        idDisciplina,
+        idSubdisciplina,
+      });
 
-    // Simula sucesso na publicação
-    Alert.alert(
-      'Sucesso',
-      'Post publicado com sucesso!',
-      [
+      Alert.alert('Sucesso', 'Post criado com sucesso!', [
         {
           text: 'OK',
-          onPress: () => router.back()
-        }
-      ]
-    );
+          onPress: () => router.back(),
+        },
+      ]);
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível criar o post. Tente novamente.');
+    }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity 
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Text style={styles.backButtonText}>← Voltar</Text>
         </TouchableOpacity>
         <View style={styles.headerTitleContainer}>
@@ -62,35 +64,39 @@ export default function CreatePost() {
 
       <ScrollView style={styles.content}>
         <TextInput
-          style={styles.titleInput}
-          placeholder="Título do post"
-          value={title}
-          onChangeText={setTitle}
-          maxLength={100}
+          style={styles.input}
+          placeholder="Título"
+          value={titulo}
+          onChangeText={setTitulo}
+          editable={!createPostMutation.isPending}
         />
-
         <TextInput
-          style={styles.authorInput}
-          placeholder="Nome do autor"
-          value={author}
-          onChangeText={setAuthor}
-          maxLength={50}
+          style={styles.input}
+          placeholder="Subtítulo"
+          value={subtitulo}
+          onChangeText={setSubtitulo}
+          editable={!createPostMutation.isPending}
         />
-
         <TextInput
-          style={styles.contentInput}
-          placeholder="Conteúdo do post"
-          value={content}
-          onChangeText={setContent}
+          style={[styles.input, styles.contentInput]}
+          placeholder="Conteúdo"
+          value={conteudo}
+          onChangeText={setConteudo}
           multiline
           textAlignVertical="top"
+          editable={!createPostMutation.isPending}
         />
 
-        <TouchableOpacity 
-          style={styles.publishButton}
-          onPress={handlePublish}
+        <TouchableOpacity
+          style={[styles.button, createPostMutation.isPending && styles.buttonDisabled]}
+          onPress={handleCreatePost}
+          disabled={createPostMutation.isPending}
         >
-          <Text style={styles.publishButtonText}>Publicar</Text>
+          {createPostMutation.isPending ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Criar Post</Text>
+          )}
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -108,7 +114,6 @@ const styles = StyleSheet.create({
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
-    backgroundColor: '#fff',
   },
   backButton: {
     padding: 8,
@@ -135,36 +140,28 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
-  titleInput: {
-    fontSize: 18,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    paddingVertical: 10,
-    marginBottom: 20,
-  },
-  authorInput: {
-    fontSize: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    paddingVertical: 10,
-    marginBottom: 20,
-  },
-  contentInput: {
-    fontSize: 16,
+  input: {
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 8,
-    padding: 15,
-    minHeight: 200,
-    marginBottom: 20,
+    padding: 12,
+    marginBottom: 16,
+    fontSize: 16,
   },
-  publishButton: {
+  contentInput: {
+    height: 200,
+  },
+  button: {
     backgroundColor: '#007AFF',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
+    marginTop: 20,
   },
-  publishButtonText: {
+  buttonDisabled: {
+    backgroundColor: '#ccc',
+  },
+  buttonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
