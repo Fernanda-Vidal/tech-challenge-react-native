@@ -25,15 +25,18 @@ export default function Login() {
 
   const loginMutation = useMutation({
     mutationFn: () => {
-      console.log('Role sendo enviada para o endpoint:', type);
+      const userRole = type as string;
+      console.log('Role sendo enviada para o endpoint:', userRole);
       return authService.login({ 
         email, 
         password, 
-        role: type as string
+        role: userRole
       });
     },
     onSuccess: async (data) => {
-      await signIn(email, password);
+      const userRole = type as string;
+      console.log('Role sendo enviada para o signIn:', userRole);
+      await signIn(email, password, userRole);
       router.replace('/home');
     },
     onError: (error) => {

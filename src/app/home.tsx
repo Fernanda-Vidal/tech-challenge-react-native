@@ -94,6 +94,8 @@ export default function Home() {
     );
   }
 
+  console.log('role na home',user?.role);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>

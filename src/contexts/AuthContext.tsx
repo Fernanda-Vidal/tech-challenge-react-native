@@ -4,7 +4,7 @@ import { User } from '../types';
 // Define o formato dos dados do contexto
 export interface AuthContextData {
   user: User | null;
-  signIn: (email: string, password: string) => Promise<void>;
+  signIn: (email: string, password: string, role?: string) => Promise<void>;
   signOut: () => void;
   updateUserProfile: (data: Partial<User>) => Promise<void>;
 }
@@ -16,10 +16,11 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string, role?: string) => {
     try {
+      console.log('Role recebida no signIn:', role);
       // Simulando uma verificação básica para diferentes tipos de usuário
-      if (email.includes('admin')) {
+      if (role === 'admin') {
         const mockAdminUser: User = {
           id: '1',
           name: 'Administrador',
@@ -27,7 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           role: 'administrativo'
         };
         setUser(mockAdminUser);
-      } else if (email.includes('professor')) {
+      } else if (role === 'professor') {
         const mockTeacherUser: User = {
           id: '2',
           name: 'Professor Exemplo',
@@ -36,11 +37,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         };
         setUser(mockTeacherUser);
       } else {
-        // Qualquer outro email ou email vazio será considerado aluno
+        // Se não houver role ou for aluno
         const mockStudentUser: User = {
           id: '3',
           name: 'Aluno Exemplo',
-          email: email || 'aluno@escola.com', // Se email estiver vazio, usa um padrão
+          email: email || 'aluno@escola.com',
           role: 'aluno'
         };
         setUser(mockStudentUser);
