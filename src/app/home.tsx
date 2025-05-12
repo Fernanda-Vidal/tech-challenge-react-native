@@ -13,12 +13,13 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { useRouter } from 'expo-router';
 import type { Post } from '../types';
-import { usePosts } from '../hooks/usePosts';
+import { usePosts, useDeletePost } from '../hooks/usePost';
 
 export default function Home() {
   const { user, signOut } = useAuth();
   const router = useRouter();
   const { data: posts, isLoading, isError, refetch, isRefetching } = usePosts();
+  const deletePostMutation = useDeletePost();
   const [searchText, setSearchText] = useState('');
   const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
 
@@ -64,8 +65,7 @@ export default function Home() {
           style: 'destructive',
           onPress: async () => {
             try {
-              // Aqui você implementaria a chamada real à API
-              refetch();
+              await deletePostMutation.mutateAsync(postId);
               Alert.alert('Sucesso', 'Post excluído com sucesso!');
             } catch (error) {
               Alert.alert('Erro', 'Não foi possível excluir o post');

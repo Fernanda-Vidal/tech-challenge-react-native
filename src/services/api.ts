@@ -178,4 +178,24 @@ export const postService = {
       throw error;
     }
   },
+
+  deletePost: async (id: string | number): Promise<void> => {
+    try {
+      console.log(`Excluindo post ${id}...`);
+      await api.delete(`/post/${id}`);
+      console.log('Post excluído com sucesso');
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error('Erro ao excluir post:', {
+          message: error.message,
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+        });
+      } else {
+        console.error('Erro não esperado ao excluir post:', error);
+      }
+      throw error;
+    }
+  },
 }; 

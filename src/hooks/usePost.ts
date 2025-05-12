@@ -57,4 +57,22 @@ export function useUpdatePost(id: string | number) {
       });
     },
   });
+}
+
+export function useDeletePost() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: postService.deletePost,
+    onSuccess: (_, deletedId) => {
+      // Invalida o cache do post específico
+      queryClient.invalidateQueries({ queryKey: ['post', deletedId] });
+      
+      // Remove o post da listagem em cache
+      queryClient.setQueryData<Post[]>(['posts'], (oldPosts) => {
+        if (!oldPosts) return [];
+        return oldPosts.filter(post => post.id_postagem !== Number(deletedId));
+      });
+    },
+  });
 } 
