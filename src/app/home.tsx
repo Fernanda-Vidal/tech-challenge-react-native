@@ -348,7 +348,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   postActions: {
-    flexDirection: '30%',
     justifyContent: 'flex-end',
     marginTop: 8,
     gap: 8,
