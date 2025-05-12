@@ -148,4 +148,34 @@ export const postService = {
       throw error;
     }
   },
+
+  updatePost: async (id: string | number, data: {
+    titulo: string;
+    subtitulo: string;
+    conteudo: string;
+    idProfessor: number;
+    idDisciplina: number;
+    idSubdisciplina: number;
+  }): Promise<Post> => {
+    try {
+      console.log(`Atualizando post ${id}:`, data);
+      const response = await api.put(`/post/${id}`, data);
+      console.log('Resposta da atualização:', response.data);
+      
+      // A API retorna um array com um único post dentro da chave post
+      return response.data.post[0];
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error('Erro ao atualizar post:', {
+          message: error.message,
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+        });
+      } else {
+        console.error('Erro não esperado ao atualizar post:', error);
+      }
+      throw error;
+    }
+  },
 }; 

@@ -197,13 +197,13 @@ export default function Home() {
               <View style={styles.postActions}>
                 <TouchableOpacity
                   onPress={() => handleEditPost(item.id_postagem.toString())}
-                  style={[styles.actionButton, styles.editButton, styles.cardActionButton]}
+                  style={[styles.actionButton, styles.editButton]}
                 >
                   <Text style={styles.actionButtonText}>Editar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => handleDeletePost(item.id_postagem.toString())}
-                  style={[styles.actionButton, styles.deleteButton, styles.cardActionButton]}
+                  style={[styles.actionButton, styles.deleteButton]}
                 >
                   <Text style={styles.actionButtonText}>Excluir</Text>
                 </TouchableOpacity>
@@ -348,21 +348,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   postActions: {
+    flexDirection: '30%',
+    justifyContent: 'flex-end',
     marginTop: 8,
     gap: 8,
-    width: '100%',
   },
   editButton: {
     backgroundColor: '#007AFF',
   },
   deleteButton: {
     backgroundColor: '#dc3545',
-  },
-  cardActionButton: {
-    padding: 12,
-    minWidth: 'auto',
-    marginTop: 0,
-    width: '100%',
   },
   postMetadata: {
     flexDirection: 'row',

@@ -36,4 +36,25 @@ export function useCreatePost() {
       });
     },
   });
+}
+
+export function useUpdatePost(id: string | number) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: Parameters<typeof postService.updatePost>[1]) => 
+      postService.updatePost(id, data),
+    onSuccess: (updatedPost) => {
+      // Atualiza o cache do post específico
+      queryClient.setQueryData(['post', id], updatedPost);
+      
+      // Atualiza o cache da listagem de posts
+      queryClient.setQueryData<Post[]>(['posts'], (oldPosts) => {
+        if (!oldPosts) return [updatedPost];
+        return oldPosts.map(post => 
+          post.id_postagem === updatedPost.id_postagem ? updatedPost : post
+        );
+      });
+    },
+  });
 } 
