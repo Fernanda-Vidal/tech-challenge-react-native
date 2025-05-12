@@ -357,79 +357,133 @@ npx expo start
 
 ## 🔧 Informações Técnicas
 
-### Sistema de Rotas (Expo Router)
-O aplicativo utiliza o Expo Router para gerenciamento de navegação, configurado no arquivo `src/app/_layout.tsx`:
+### Tecnologias Principais
+- **React Native** com Expo (v52.0.46)
+- **TypeScript**
+- **Expo Router** (v4.0.20) para navegação
+- **React Query** (@tanstack/react-query v5.75.7) para gerenciamento de estado
+- **Axios** (v1.9.0) para requisições HTTP
 
+### Sistema de Navegação
+Utiliza uma combinação de bibliotecas modernas:
+- **expo-router**: Sistema de arquivos baseado em navegação
+- **react-navigation/native** (v7.0.14): Base da navegação
+- **react-navigation/bottom-tabs** (v7.2.0): Navegação por tabs
+- **expo-linking** (v7.0.5): Deep linking e URLs universais
 
-#### Estrutura de Rotas
-- `/login` - Tela de autenticação
-- `/home` - Dashboard principal (adaptada por role)
-- `/register-teacher` - Cadastro de professor
-- `/edit-teacher/[id]` - Edição de professor específico
-- `/students` - Lista de alunos
-- `/edit-student/[id]` - Edição de aluno específico
-- `/register-student` - Cadastro de aluno
-- `/edit-post/[id]` - Edição de post específico
-- `/edit-profile` - Edição de perfil do usuário
+### Componentes e UI
+- **@expo/vector-icons** (v14.0.2): Ícones vetoriais
+- **expo-constants** (v17.0.8): Constantes da plataforma
+- **expo-font** (v13.0.4): Gerenciamento de fontes
+- **expo-haptics** (v14.0.1): Feedback tátil
+- **expo-system-ui** (v4.0.9): Interação com UI do sistema
+- **expo-status-bar** (v2.0.1): Controle da barra de status
+- **expo-splash-screen** (v0.29.24): Tela de splash
+- **expo-web-browser** (v14.0.2): Funcionalidades de navegador
 
-#### Características do Sistema de Rotas
-- **Navegação em Stack**: Utiliza `Stack.Navigator` do Expo Router
-- **Rotas Dinâmicas**: Suporte a parâmetros via `[id]`
-- **Proteção de Rotas**: Envolvido pelo `AuthProvider`
-- **Gestos**: Habilitados para navegação por gestos
-- **Headers**: Configurados individualmente por rota
-- **Tipo-seguro**: Totalmente tipado com TypeScript
+### Desenvolvimento e Testes
+- **Jest** com preset jest-expo para testes
+- **ESLint** para linting de código
 
-### Convenções de Nomenclatura
-- Arquivos de rota seguem o padrão kebab-case
-- Parâmetros dinâmicos entre colchetes `[param]`
-- Componentes em PascalCase
-- Hooks em camelCase com prefixo 'use'
+### Scripts Disponíveis
+```bash
+# Iniciar o projeto
+npm start              # ou: expo start
 
-### Estrutura de Navegação
+# Plataformas específicas
+npm run android        # expo start --android
+npm run ios           # expo start --ios
+npm run web           # expo start --web
+
+# Testes
+npm test              # jest --watchAll
+
+# Linting
+npm run lint          # expo lint
+
+# Reset do projeto
+npm run reset-project # node ./scripts/reset-project.js
 ```
-App
-├── Login
-└── Home
-    ├── Professores
-    │   ├── Cadastro
-    │   └── Edição
-    ├── Alunos
-    │   ├── Lista
-    │   ├── Cadastro
-    │   └── Edição
-    ├── Posts
-    │   └── Edição
-    └── Perfil
-        └── Edição
-```
 
-### Controle de Acesso por Rota
-- **Público**: `/login`
-- **Administrativo**: todas as rotas
-- **Professor**: `/home`, `/students/*`, `/register-teacher`, `/edit-profile`
-- **Aluno**: `/home`
-
-### Navegação Programática
+### Gerenciamento de Estado e Cache (@tanstack/react-query)
+Configurado em `src/lib/queryClient.ts`:
 ```typescript
-// Exemplo de navegação com parâmetros
-router.push({
-  pathname: '/edit-teacher/[id]',
-  params: { id: teacherId }
-});
-
-// Navegação simples
-router.push('/students');
-
-// Voltar
-router.back();
+defaultOptions: {
+  queries: {
+    retry: 1,                        // Tenta refazer a requisição 1 vez em caso de erro
+    staleTime: 1000 * 60 * 5,       // Dados considerados frescos por 5 minutos
+    gcTime: 1000 * 60 * 30,         // Dados mantidos em cache por 30 minutos
+    refetchOnWindowFocus: false,     // Não refaz requisição ao focar a janela
+    refetchOnReconnect: true,        // Refaz requisição ao reconectar
+  },
+}
 ```
 
-### Boas Práticas
-- Sempre use tipagem forte nos parâmetros
-- Mantenha as opções de rota consistentes
-- Use gestureEnabled para melhor UX
-- Implemente proteção de rotas no nível do componente
-- Mantenha o layout.tsx organizado e documentado
+### Serviços de API (Axios)
+Configurado em `src/services/api.ts`:
+```typescript
+const api = axios.create({
+  baseURL: getBaseUrl(),     // URL base dinâmica baseada na plataforma
+  timeout: 10000,            // Timeout de 10 segundos
+});
+```
+
+#### Adaptação por Plataforma
+- Android: `http://10.0.2.2:3000/api`
+- iOS/outros: `http://localhost:3000/api`
+
+#### Serviços Implementados
+- **authService**: Autenticação de usuários
+  - login (POST `/auth/${role}/login`)
+- **postService**: Gerenciamento de posts
+  - getPosts (GET `/post`)
+  - getPostById (GET `/post/:id`)
+  - createPost (POST `/post`)
+  - updatePost (PUT `/post/:id`)
+  - deletePost (DELETE `/post/:id`)
+
+  <details>
+<summary>Endpoints</summary>
+
+1- login: POST http://localhost:3000/api/$authType/login
+   o authType pode ser professor ou admin
+
+   body: {
+      "email": "fernanda@escola.com" OU "admin@escola.com",
+      "senha": "123456"
+   }
+
+1- lista de todas as postagens: GET http://localhost:3000/api/post
+
+2- busca postagem por id: GET http://localhost:3000/api/post/1
+
+3- criação de post: POST http://localhost:3000/api/post
+
+    body: {
+    "titulo": "Nova Postagem2",
+    "subtitulo": "Conteúdo de prova",
+    "conteudo": "Lorem ipsum...", 
+    "idProfessor": "1",
+    "idDisciplina": "1",
+    "idSubdisciplina": "1"
+    }
+
+4- edição da postagem: PUT http://localhost:3000/api/post/1
+
+    body: {
+    "titulo" : "Nova Postagem alterada",
+    "subtitulo" : "Conteúdo complementar",
+    "conteudo" : "Lorem ipsum alterado..."
+    }
+
+5- lista de todas as postagens com dados do professor: GET http://localhost:3000/api/post/teacher
+
+6- exclusão do post: DELETE http://localhost:3000/api/post/6
+
+7- busca da postagem por termo: GET http://localhost:3000/api/post/search?term=Nova
+</details>
+
+<details>
+
 
 
