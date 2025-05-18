@@ -24,9 +24,40 @@ export default function CreatePost() {
   const [idDisciplina, setIdDisciplina] = useState('1'); // Temporariamente fixo
   const [idSubdisciplina, setIdSubdisciplina] = useState('1'); // Temporariamente fixo
 
+  const handleTituloChange = (text: string) => {
+    setTitulo(text);
+  };
+
+  const handleSubtituloChange = (text: string) => {
+    setSubtitulo(text);
+  };
+
+  const handleConteudoChange = (text: string) => {
+    setConteudo(text);
+  };
+
+  const isTituloValid = titulo.length > 5;
+  const isSubtituloValid = subtitulo.length > 5;
+  const isConteudoValid = conteudo.length > 20;
+
   const handleCreatePost = async () => {
     if (!titulo || !subtitulo || !conteudo) {
       Alert.alert('Erro', 'Por favor, preencha todos os campos');
+      return;
+    }
+
+    if (titulo.length <= 5) {
+      Alert.alert('Erro', 'O título deve ter mais de 5 caracteres');
+      return;
+    }
+
+    if (subtitulo.length <= 5) {
+      Alert.alert('Erro', 'O subtítulo deve ter mais de 5 caracteres');
+      return;
+    }
+
+    if (conteudo.length <= 20) {
+      Alert.alert('Erro', 'O conteúdo deve ter mais de 20 caracteres');
       return;
     }
 
@@ -64,28 +95,39 @@ export default function CreatePost() {
 
       <ScrollView style={styles.content}>
         <TextInput
-          style={styles.input}
+          style={[styles.input, !isTituloValid && titulo.length > 0 && styles.inputError]}
           placeholder="Título"
           value={titulo}
-          onChangeText={setTitulo}
+          onChangeText={handleTituloChange}
           editable={!createPostMutation.isPending}
         />
+        {!isTituloValid && titulo.length > 0 && (
+          <Text style={styles.errorText}>O título deve ter mais de 5 caracteres</Text>
+        )}
+        
         <TextInput
-          style={styles.input}
+          style={[styles.input, !isSubtituloValid && subtitulo.length > 0 && styles.inputError]}
           placeholder="Subtítulo"
           value={subtitulo}
-          onChangeText={setSubtitulo}
+          onChangeText={handleSubtituloChange}
           editable={!createPostMutation.isPending}
         />
+        {!isSubtituloValid && subtitulo.length > 0 && (
+          <Text style={styles.errorText}>O subtítulo deve ter mais de 5 caracteres</Text>
+        )}
+
         <TextInput
-          style={[styles.input, styles.contentInput]}
+          style={[styles.input, styles.contentInput, !isConteudoValid && conteudo.length > 0 && styles.inputError]}
           placeholder="Conteúdo"
           value={conteudo}
-          onChangeText={setConteudo}
+          onChangeText={handleConteudoChange}
           multiline
           textAlignVertical="top"
           editable={!createPostMutation.isPending}
         />
+        {!isConteudoValid && conteudo.length > 0 && (
+          <Text style={styles.errorText}>O conteúdo deve ter mais de 20 caracteres</Text>
+        )}
 
         <TouchableOpacity
           style={[styles.button, createPostMutation.isPending && styles.buttonDisabled]}
@@ -145,8 +187,17 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderRadius: 8,
     padding: 12,
-    marginBottom: 16,
+    marginBottom: 8,
     fontSize: 16,
+  },
+  inputError: {
+    borderColor: '#ff3b30',
+  },
+  errorText: {
+    color: '#ff3b30',
+    fontSize: 12,
+    marginBottom: 16,
+    marginLeft: 4,
   },
   contentInput: {
     height: 200,

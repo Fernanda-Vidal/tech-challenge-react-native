@@ -4,7 +4,15 @@
 
 Aplicativo mobile desenvolvido em React Native com Expo para gestão escolar, permitindo diferentes níveis de acesso e funcionalidades para professores, administrativos e alunos.
 
-## 🏗️ Arquitetura
+<details>
+<summary>Detalhes técnicos</summary>
+
+
+
+</details>
+
+<details>
+<summary>Arquitetura</summary>
 
 ### Estrutura de Diretórios
 ```
@@ -23,6 +31,7 @@ src/
 ├── types/                # Definições de tipos TypeScript
 └── utils/                # Funções utilitárias
 ```
+
 
 ### 🔐 Sistema de Autenticação
 
@@ -62,24 +71,11 @@ src/
 - Funcionalidades de busca
 - Paginação de conteúdo
 
-### 🎨 UI/UX
+</details>
 
-- Design consistente
-- Feedback visual para ações
-- Validações de formulários
-- Navegação intuitiva
-- Componentes reutilizáveis
 
-## 🛠️ Tecnologias
-
-- React Native
-- Expo
-- TypeScript
-- Expo Router
-- Context API
-- React Navigation
-
-## 📦 Principais Funcionalidades
+<details>
+<summary>📦 Principais Funcionalidades</summary>
 
 ### Autenticação
 - Login com email/senha
@@ -110,7 +106,10 @@ src/
 - Criação de conteúdo
 - Edição de perfil próprio
 
-## 🚀 Como Executar
+</details>
+
+<details>
+<summary>🚀 Como Executar</summary>
 
 1. Clone o repositório
 ```bash
@@ -126,6 +125,10 @@ npm install
 ```bash
 npx expo start
 ```
+</details>
+
+<details>
+<summary>🔄 Fluxos Principais</summary>
 
 ## 🔄 Fluxos Principais
 
@@ -181,7 +184,12 @@ npx expo start
 - [ ] Temas dark/light
 - [ ] Acessibilidade
 
-## 📋 Requisitos e Dependências
+</details>
+
+
+
+<details>
+<summary>📋 Requisitos e Dependências</summary>
 
 ### Requisitos do Sistema
 - Node.js >= 18.0.0
@@ -355,7 +363,57 @@ npx expo start
    pod install
    ```
 
-## 🔧 Informações Técnicas
+</details>
+
+<details>
+<summary>🚀 Como Executar</summary>
+
+1. Clone o repositório
+```bash
+git clone [url-do-repositorio]
+```
+
+2. Instale as dependências
+```bash
+npm install
+```
+
+3. Rode o seguintecomando para ver os emuladores disponíveis
+```bash
+emulator -list-avds
+```bash
+
+4. Inicie o emulador
+```bash
+emulator -avd Pixel_3a_API_34_extension_level_7_x86_64
+```
+
+5. Execute o projeto
+```bash
+npx expo start
+```
+
+</details>
+
+<details>
+<summary>🔧 Informações Técnicas</summary>
+
+## 🛠️ Tecnologias
+
+- React Native
+- Expo
+- TypeScript
+- Expo Router
+- Context API
+- React Navigation
+
+### 🎨 UI/UX
+
+- Design consistente
+- Feedback visual para ações
+- Validações de formulários
+- Navegação intuitiva
+- Componentes reutilizáveis
 
 ### Tecnologias Principais
 - **React Native** com Expo (v52.0.46)
@@ -441,8 +499,9 @@ const api = axios.create({
   - createPost (POST `/post`)
   - updatePost (PUT `/post/:id`)
   - deletePost (DELETE `/post/:id`)
-
-  <details>
+</details>
+  
+<details>
 <summary>Endpoints</summary>
 
 1- login: POST http://localhost:3000/api/$authType/login
