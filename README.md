@@ -2,12 +2,62 @@
 
 ## 📱 Sobre o Projeto
 
+Projeto desenvolvido para avaliação do curso de pós graduação de Desenvolvimento Full Stack - [FIAP](https://postech.fiap.com.br/). 
+INTEGRANTES:
+FERNANDA VIDAL DE JESUS
+
 Aplicativo mobile desenvolvido em React Native com Expo para gestão escolar, permitindo diferentes níveis de acesso e funcionalidades para professores, administrativos e alunos.
+
+
+
+<div align="justify">
+O presente projeto se propões a cumprir os requisitos avaliativos descritos no documento disponibilizado pela instit Frontend (Mobile)
+
+#### Frontend (Mobile)
+Interface desenvolvida em React Native com Expo (v52.0.46), com uso de Context API e React Query (v5.75.7) para gerenciamento de estado;
+Estilização com StyleSheet API do React Native;
+Três rotas de acesso: aluno, professor e admin;
+Sistema de login com autenticação de usuário para as três roles;
+Tela home com listagem de todos os posts, contendo opções de editação e deleção exclusivas para admin;
+Tela de visualização de post específico;
+Tela de edição de post específico (acesso admin);
+Tela de criação de post (acesso professor e admin);
+Todas as rotas integradas consumindo API REST via Axios (v1.9.0);
+Sistema de navegação implementado com Expo Router (v4.0.20);
+Feedback tátil com expo-haptics (v14.0.1);
+Suporte a ícones vetoriais com @expo/vector-icons (v14.0.2);
+Navegação por tabs com @react-navigation/bottom-tabs (v7.2.0).
+
+#### Backend (avaliado na fase 2)
+desenvolvimento de servidor Node com Express;
+persistência de dados com banco de dados relacional;
+implementação de containers para subir a aplicação e orquestração dos mesmos;
+automação através da configuração de esteira CI/CD para testes e deploy;
+documentação técnica descrevendo a arquitetura do sistema, o uso da aplicaçaõ, setup inicial e experiências e desafios encontrados;
+cobertura de testes de pelo menos 20% do código;
+interface de usuário em React para interação com o sistema.
+
+## 🛠️ Tecnologias
+
+- React Native
+- Expo
+- TypeScript
+- Expo Router
+- Context API
+- React Navigation
+
+### 🎨 UI/UX
+
+- Design consistente
+- Feedback visual para ações
+- Validações de formulários
+- Navegação intuitiva
+- Componentes reutilizáveis
+
+</div>
 
 <details>
 <summary>Detalhes técnicos</summary>
-
-
 
 </details>
 
@@ -47,13 +97,15 @@ src/
 
 #### Administrativo
 - Visualização de todos os posts
-- Gerenciamento de professores (CRUD)
+- Gerenciamento de professores
 - Edição e exclusão de posts
 - Acesso à lista de docentes
 
 #### Professor
+- Visualização de posts
 - Criação de posts
-- Gerenciamento de alunos (CRUD)
+- Edição de posts
+- Gerenciamento de alunos
 - Edição do próprio perfil
 - Cadastro de outros professores
 
@@ -131,7 +183,7 @@ docker-compose up -d --build
 npx expo start
 ```
 </details>
-
+ 
 <details>
 <summary>🔄 Fluxos Principais</summary>
 
@@ -403,23 +455,6 @@ npx expo start
 <details>
 <summary>🔧 Informações Técnicas</summary>
 
-## 🛠️ Tecnologias
-
-- React Native
-- Expo
-- TypeScript
-- Expo Router
-- Context API
-- React Navigation
-
-### 🎨 UI/UX
-
-- Design consistente
-- Feedback visual para ações
-- Validações de formulários
-- Navegação intuitiva
-- Componentes reutilizáveis
-
 ### Tecnologias Principais
 - **React Native** com Expo (v52.0.46)
 - **TypeScript**
@@ -547,7 +582,15 @@ const api = axios.create({
 7- busca da postagem por termo: GET http://localhost:3000/api/post/search?term=Nova
 </details>
 
-<details>
+### Relatos e Experiência
 
+<div align="justify">
+Já tenho hábilidade de desenvolvimento mobile com flutter, então houve uma certa dificuldade em entender a estrutura do react native, bem como sua estrutura e seus componentes nativos, mas após algumas pesquisas e estudos, consegui entender a estrutura e os requisitos funcionais e tecnicos.
 
+Porém, obtive maior dificuldade por a minha estrutura já realizada na fase 2 (backend) ter sido estruturada antes de eu sair do meu grupo inicial, então nesta fase, encontrei dificuldade em realizar alterações na estrutura do banco de dados, isso me obrigou a tentar manobras alteranativas que não me obrigassem a construir toda o ambiente do banco de dados e backend novamente. Especialmente sob o temor de quebrar os endpoints já existentes e fazer com que tudo parasse de funcionar. 
+
+O desafio de reestruturar o ambiente do backend para as novas necessidades do front se deu em especial porque eu tive que fazer todo o projeto, que foi pensado para ser feito em grupo, sozinha. Então, minha má sorte de cair em um grupo não colaborativo acabou me colocando nessas situação de dificuldade por falta do recurso mais escasso: tempo. Tenho certeza de que se o trabalho tivesse sido realizado em grupo, nós não teríamos dificuldades em administrar o tempo para ajustar todo o projeto para todos os requisitos, assim como acontece num time real de desenvolvimento. 
+
+Mas, como também é demandado num time real de desenvolvimento, acredito que consegui praticar a a habilidade da flexibilização, adaptação e priorização e demonstrar o meu crescimento e aprendizado na stack que está sendo avaliada no módulo atual do curso. E diante disso e de toda a dificuldade que se apresentou, estou bastante satisfeita com o resultado que obtive.
+</div>
 
