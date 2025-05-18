@@ -121,7 +121,12 @@ git clone [url-do-repositorio]
 npm install
 ```
 
-3. Execute o projeto
+3. Suba o docker
+```bash
+docker-compose up -d --build
+```
+
+4. Execute o projeto
 ```bash
 npx expo start
 ```

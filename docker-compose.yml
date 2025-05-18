@@ -1,0 +1,51 @@
+version: "3.8"
+
+services:
+  db_postgres:
+    container_name: db-escola
+    image: postgres:14.15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: app-escola
+    volumes: 
+      - db_postgres:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports: 
+      - "5432:5432"
+
+  app:
+    container_name: app-escola-node
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    depends_on:
+      - db_postgres
+    ports: 
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+    environment:
+      DB_HOST: db_postgres
+      DB_USER: postgres
+      DB_PASSWORD: 1234
+      DB_NAME: app-escola
+    command: ["sh", "./wait-for-it.sh", "db_postgres", "--", "npm", "run", "dev"]
+
+  pgAdmin:
+    container_name: pgAdmin-escola
+    image: dpage/pgadmin4
+    depends_on:
+      - db_postgres
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+    volumes:
+      - pgAdmin:/var/lib/pgAdmin
+    ports:
+      - "15432:80"
+   
+volumes:
+    db_postgres:
+    pgAdmin:

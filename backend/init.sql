@@ -1,3 +1,13 @@
+-- Limpar e reiniciar as sequences
+DROP TABLE IF EXISTS postagem;
+DROP TABLE IF EXISTS administracao;
+DROP TABLE IF EXISTS aluno;
+DROP TABLE IF EXISTS professor;
+DROP TABLE IF EXISTS pessoa;
+DROP TABLE IF EXISTS turma;
+DROP TABLE IF EXISTS subdisciplina;
+DROP TABLE IF EXISTS disciplina;
+
 -- Criação das tabelas
 CREATE TABLE IF NOT EXISTS pessoa (
     id_pessoa SERIAL PRIMARY KEY,
@@ -61,6 +71,16 @@ CREATE TABLE IF NOT EXISTS postagem(
     FOREIGN KEY (id_subdisciplina) REFERENCES subdisciplina(id_subdisciplina)
 );
 
+-- Resetar as sequences
+ALTER SEQUENCE pessoa_id_pessoa_seq RESTART WITH 1;
+ALTER SEQUENCE disciplina_id_disciplina_seq RESTART WITH 1;
+ALTER SEQUENCE subdisciplina_id_subdisciplina_seq RESTART WITH 1;
+ALTER SEQUENCE professor_id_professor_seq RESTART WITH 1;
+ALTER SEQUENCE turma_id_turma_seq RESTART WITH 1;
+ALTER SEQUENCE aluno_id_aluno_seq RESTART WITH 1;
+ALTER SEQUENCE administracao_id_adm_seq RESTART WITH 1;
+ALTER SEQUENCE postagem_id_postagem_seq RESTART WITH 1;
+
 -- Inserção de dados
 INSERT INTO disciplina(id_disciplina, nome_disciplina)
 VALUES
@@ -71,34 +91,34 @@ VALUES
     (1, 'literatura');
 
 -- Inserção de pessoas
-INSERT INTO pessoa (nome, email, senha, role)
+INSERT INTO pessoa (id_pessoa, nome, email, senha, role)
 VALUES
-    ('Fernanda', 'fernanda@escola.com', '123456', 'professor'),
-    ('Adriana Calcanhoto', 'adriana@escola.com', '123456', 'aluno'),
-    ('Bruno Mars', 'bruno@escola.com', '123456', 'aluno'),
-    ('Coralie Barbier', 'coralie@escola.com', '123456', 'aluno'),
-    ('Admin', 'admin@escola.com', '123456', 'administrativo');
+    (1, 'Fernanda', 'fernanda@escola.com', '123456', 'professor'),
+    (2, 'Adriana Calcanhoto', 'adriana@escola.com', '123456', 'aluno'),
+    (3, 'Bruno Mars', 'bruno@escola.com', '123456', 'aluno'),
+    (4, 'Coralie Barbier', 'coralie@escola.com', '123456', 'aluno'),
+    (5, 'Admin', 'admin@escola.com', '123456', 'administrativo');
 
 -- Inserção de professor relacionado à pessoa
 INSERT INTO professor(id_professor, id_pessoa, id_disciplina, id_subdisciplina)
 VALUES
     (1, 1, 1, 1);
 
-INSERT INTO turma (nome_turma, serie_turma)
+INSERT INTO turma (id_turma, nome_turma, serie_turma)
 VALUES
-    ('A', '6'),
-    ('B', '7'),
-    ('C', '8'),
-    ('D', '9');
+    (1, 'A', '6'),
+    (2, 'B', '7'),
+    (3, 'C', '8'),
+    (4, 'D', '9');
 
 -- Inserção de alunos relacionados às pessoas
-INSERT INTO aluno (id_pessoa, id_turma)
+INSERT INTO aluno (id_aluno, id_pessoa, id_turma)
 VALUES
-    (2, 1),
-    (3, 1),
-    (4, 1);
+    (1, 2, 1),
+    (2, 3, 1),
+    (3, 4, 1);
 
 -- Inserção do administrador
-INSERT INTO administracao (id_pessoa, cod_funcional)
+INSERT INTO administracao (id_adm, id_pessoa, cod_funcional)
 VALUES
-    (5, 'ADM001');
+    (1, 5, 'ADM001');
